@@ -523,16 +523,15 @@
         "autoUpgradeMinorVersion": true,
         "settings": {
           "fileUris": [
-            "https://github.com/ahpeng/dockerswarm/blob/master/InstallSwarm.sh"
+            "https://raw.githubusercontent.com/ahpeng/DockerSwarm/master/InstallSwarm.sh"
           ],
           "commandToExecute": "sh InstallSwarm.sh"
         }
       }
     }
-  ]
-}
+  ],
 
-  "outputs": {
+"outputs": {
     "sshTunnelCmd": {
       "type": "string",
       "value": "[concat('ssh -L 2375:swarm-master-0:2375 -N ', variables('adminUsername'), '@', reference(variables('managementPublicIPAddrName')).dnsSettings.fqdn, ' -p 2200')]"
