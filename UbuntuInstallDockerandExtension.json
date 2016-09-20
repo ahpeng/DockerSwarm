@@ -205,6 +205,9 @@
             "name": "[concat(variables('vmName'), '/InstallDocker')]",
             "apiVersion": "[variables('apiVersion')]",
             "location": "[resourceGroup().location]",
+            "dependsOn": [
+        "[concat('Microsoft.Compute/virtualMachines/', variables('vmName'))]"
+      ],
             "properties": {
                 "publisher": "Microsoft.OSTCExtensions",
                 "type": "CustomScriptForLinux",
