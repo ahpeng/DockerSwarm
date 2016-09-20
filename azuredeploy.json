@@ -469,6 +469,10 @@
       "name": "[concat(variables('vmNameMaster'), copyIndex(), '/InstallDocker')]",
       "apiVersion": "[variables('apiVersion')]",
       "location": "[resourceGroup().location]",
+       "copy": {
+        "name": "extensionLoopMaster",
+        "count": "[variables('masterCount')]"
+      },
       "dependsOn": [
          "[concat('Microsoft.Compute/virtualMachines/', variables('vmNameMaster'), copyIndex())]"
       ],
@@ -544,6 +548,10 @@
       "name": "[concat(variables('vmNameNode'), copyIndex(), '/InstallDocker')]",
       "apiVersion": "[variables('apiVersion')]",
       "location": "[resourceGroup().location]",
+      "copy": {
+        "name": "extensionLoopNode",
+        "count": "[parameters('nodeCount')]"
+      },
       "dependsOn": [
          "[concat('Microsoft.Compute/virtualMachines/', variables('vmNameNode'), copyIndex())]"
       ],
