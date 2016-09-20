@@ -227,7 +227,7 @@
       "location": "[resourceGroup().location]",
       "dependsOn": [
         "[concat('Microsoft.Compute/virtualMachines/', variables('vmName'))]",
-        "[concat('Microsoft.Compute/virtualMachines/extensions/', variables('vmName'), '/InstallDocker')]"
+        "[concat('Microsoft.Compute/virtualMachines/', variables('vmName'), '/extensions/', '/InstallDocker')]"
       ],
       "properties": {
         "publisher": "Microsoft.Azure.Extensions",
