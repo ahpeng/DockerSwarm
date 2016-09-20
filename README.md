@@ -4,7 +4,7 @@
 <a href="http://armviz.io/#/?load=https%3A%2F%2Fraw.githubusercontent.com%2Fahpeng%2FDockerSwarm%2Fmaster%2Fazuredeploy.json" target="_blank">
     <img src="http://armviz.io/visualizebutton.png"/>
 </a>
-# 在中国区Azure上部署Docker Swarm Cluster (旧版docker 1.11.2)
+# 在Azure中国部署Docker Swarm Cluster (docker 1.11.2)
 根据以下Azure Quick Template改写：
 
 https://github.com/Azure/azure-quickstart-templates/tree/master/docker-swarm-cluster
