@@ -9,6 +9,8 @@
 
 https://github.com/Azure/azure-quickstart-templates/tree/master/docker-swarm-cluster
 
+请选择部署在中国北部。
+
 感谢微软中国Azure架构师Steven Lian和Wei Heng、张磊老师的大力帮助。
 
 
