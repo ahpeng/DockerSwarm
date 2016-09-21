@@ -133,13 +133,7 @@
             "[variables('addressPrefixNodes')]"
           ]
         },
-        "dhcpOptions":{  
-            "dnsServers":[  
-               "223.6.6.6",
-               "223.5.5.5"
-            ]
-         },
-        "subnets": [
+      "subnets": [
           {
             "name": "[variables('subnetNameMasters')]",
             "properties": {
