@@ -17,7 +17,7 @@
     },
     "nodeCount": {
       "type": "int",
-      "defaultValue": 3,
+      "defaultValue": 2,
       "metadata": {
         "description": "Number of Swarm worker nodes in the cluster."
       }
