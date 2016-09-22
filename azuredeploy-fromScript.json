@@ -519,7 +519,7 @@
                 "autoUpgradeMinorVersion": "true",
                 "settings": {
                     "fileUris": [ "[concat(parameters('configureScriptsRootLocation'), variables('swarmScriptName'))]" ],
-                    "commandToExecute": "[concat('/bin/bash -c \"/bin/bash configure-swarm-azurestack.sh ', variables('clusterInstallParameters'), ' >> /var/log/azure/cluster-bootstrap.log 2>&1\"')]"
+                    "commandToExecute": "[concat('/bin/bash -c \"/bin/bash InstallSwarm.sh ', variables('clusterInstallParameters'), ' >> /var/log/azure/cluster-bootstrap.log 2>&1\"')]"
                 }
             }
         },
