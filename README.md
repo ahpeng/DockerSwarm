@@ -5,7 +5,7 @@
     <img src="http://armviz.io/visualizebutton.png"/>
 </a>
 # 在Azure中国部署Docker Swarm Cluster (docker 1.11.2)
-根据以下Azure Quick Template改写：
+默认的部署配置根据2016/9的Azure Stack Quick Template改写，没有调用Azure Docker Extension，只调用Azure CustomScript完成docker、swarm等配置。
 
 https://github.com/Azure/azure-quickstart-templates/tree/master/docker-swarm-cluster
 
