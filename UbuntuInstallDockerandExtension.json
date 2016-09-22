@@ -24,7 +24,7 @@
       "type": "string",
       "defaultValue": "https://raw.githubusercontent.com/ahpeng/DockerSwarm/master/InstallDocker.sh",
       "metadata": {
-        "description": "The url of the script."
+        "description": "The url of the script that install docker 1.11.2."
       } 
     },
     "ubuntuOSVersion": {
