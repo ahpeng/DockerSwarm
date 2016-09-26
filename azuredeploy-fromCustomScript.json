@@ -10,11 +10,20 @@
     },
     "scriptUrl":{
       "type": "string",
-      "defaultValue": "https://raw.githubusercontent.com/ahpeng/DockerSwarm/master/InstallDocker.sh",
+      "defaultValue": "https://raw.githubusercontent.com/ahpeng/DockerSwarm/master/InstallSwarm.sh",
       "metadata": {
-        "description": "The url of the script that install docker 1.11.2."
+        "description": "The url of the script that install docker and swarm."
       } 
     },
+    "masterCount": {
+            "type": "int",
+            "defaultValue": 3,
+            "allowedValues": [
+                1,
+                3,
+                5
+            ]
+    },        
     "nodeCount": {
       "type": "int",
       "defaultValue": 3,
@@ -24,9 +33,10 @@
     }
   },
   "variables": {
-    "masterCount": 3,
     "adminUsername": "azureuser",
     "vmNameMaster": "swarm-master-",
+    "masterFirstAddr": "4",
+    "baseSubnet": "[split(variables('subnetPrefixMasters'),'0/24')[0]]",
     "vmNameNode": "swarm-node-",
     "vmSizeMaster": "Standard_A2",
     "vmSizeNode": "Standard_A3",
@@ -63,6 +73,7 @@
     "nodesLbName": "swarm-lb-nodes",
     "nodesLbID": "[resourceId('Microsoft.Network/loadBalancers',variables('nodesLbName'))]",
     "nodesLbBackendPoolName": "swarm-nodes-pool",
+    "clusterInstallParameters": "[concat(parameters('masterCount'), ' ',variables('vmNameMaster'), ' ',variables('masterFirstAddr'), ' ',variables('adminUsername'),' ',' ', ' ', variables('baseSubnet'))]", 
     "sshKeyPath": "[concat('/home/', variables('adminUsername'), '/.ssh/authorized_keys')]",
     "consulServerArgs": [
       "-advertise 10.0.0.4 -bootstrap-expect 3 -retry-join 10.0.0.5 -retry-join 10.0.0.6",
@@ -134,12 +145,6 @@
             "[variables('addressPrefixNodes')]"
           ]
         },
-        "dhcpOptions":{  
-            "dnsServers":[  
-               "223.6.6.6",
-               "223.5.5.5"
-            ]
-         },
         "subnets": [
           {
             "name": "[variables('subnetNameMasters')]",
@@ -217,7 +222,7 @@
       "location": "[resourceGroup().location]",
       "copy": {
         "name": "nicLoopMaster",
-        "count": "[variables('masterCount')]"
+        "count": "[parameters('masterCount')]"
       },
       "dependsOn": [
         "[concat('Microsoft.Network/loadBalancers/', variables('mastersLbName'))]",
@@ -282,7 +287,7 @@
       "location": "[resourceGroup().location]",
       "copy": {
         "name": "lbNatLoopMaster",
-        "count": "[variables('masterCount')]"
+        "count": "[parameters('masterCount')]"
       },
       "dependsOn": [
         "[concat('Microsoft.Network/loadBalancers/', variables('mastersLbName'))]"
@@ -362,7 +367,7 @@
       "location": "[resourceGroup().location]",
       "copy": {
         "name": "vmLoopMaster",
-        "count": "[variables('masterCount')]"
+        "count": "[parameters('masterCount')]"
       },
       "dependsOn": [
         "[concat('Microsoft.Network/networkInterfaces/', variables('vmNameMaster'), copyIndex(), '-nic')]",
@@ -481,7 +486,7 @@
       "location": "[resourceGroup().location]",
        "copy": {
         "name": "extensionLoopMaster",
-        "count": "[variables('masterCount')]"
+        "count": "[parameters('masterCount')]"
       },
       "dependsOn": [
          "[concat('Microsoft.Compute/virtualMachines/', variables('vmNameMaster'), copyIndex())]"
@@ -494,66 +499,11 @@
                     "fileUris": [
                         "[parameters('scriptUrl')]"
                     ],
-                    "commandToExecute": "sh InstallDocker.sh"
+                    "commandToExecute": "[concat('/bin/bash -c \"/bin/bash InstallSwarm.sh ', variables('clusterInstallParameters'), ' >> /var/log/azure/cluster-bootstrap.log 2>&1\"')]"
                 }
             }
     },
-    {
-      "type": "Microsoft.Compute/virtualMachines/extensions",
-      "name": "[concat(variables('vmNameMaster'), copyIndex(), '/DockerExtension')]",
-      "apiVersion": "2015-06-15",
-      "location": "[resourceGroup().location]",
-      "copy": {
-        "name": "extensionLoopMaster",
-        "count": "[variables('masterCount')]"
-      },
-      "dependsOn": [
-        "[concat('Microsoft.Compute/virtualMachines/', variables('vmNameMaster'), copyIndex())]",
-        "[concat('Microsoft.Compute/virtualMachines/', variables('vmNameMaster'), copyIndex(), '/extensions/', '/InstallDocker')]"
-      ],
-      "properties": {
-        "publisher": "Microsoft.Azure.Extensions",
-        "type": "DockerExtension",
-        "typeHandlerVersion": "1.0",
-        "autoUpgradeMinorVersion": true,
-        "settings": {
-          "compose": {
-            "consul": {
-              "image": "progrium/consul",
-              "command": "[concat('-server -node master', copyIndex(), ' ', variables('consulServerArgs')[copyIndex()])]",
-              "ports": [
-                "8500:8500",
-                "8300:8300",
-                "8301:8301",
-                "8301:8301/udp",
-                "8302:8302",
-                "8302:8302/udp",
-                "8400:8400"
-             ],
-              "volumes": [
-                "/data/consul:/data"
-              ],
-              "restart": "always"
-            },
-            "swarm": {
-              "image": "swarm",
-              "command": "[concat('manage --replication --advertise ', reference(concat(variables('vmNameMaster'), copyIndex(), '-nic')).ipConfigurations[0].properties.privateIPAddress, ':2375 --discovery-opt kv.path=docker/nodes consul://10.0.0.4:8500')]",
-              "ports": [
-                "2375:2375"
-              ],
-              "links": [
-                "consul"
-              ],
-              "volumes": [
-                "/etc/docker:/etc/docker"
-              ],
-              "restart": "always"
-            }
-          }
-        }
-      }
-    },
-    {
+   {
       "type": "Microsoft.Compute/virtualMachines/extensions",
       "name": "[concat(variables('vmNameNode'), copyIndex(), '/InstallDocker')]",
       "apiVersion": "[variables('apiVersion')]",
@@ -573,38 +523,9 @@
                     "fileUris": [
                         "[parameters('scriptUrl')]"
                     ],
-                    "commandToExecute": "sh InstallDocker.sh"
+                    "commandToExecute": "[concat('/usr/bin/nohup /bin/bash -c \"/bin/bash InstallSwarm.sh ', variables('clusterInstallParameters'), ' >> /var/log/azure/cluster-bootstrap.log 2>&1 &\" &')]"
                 }
             }
-    },
-    {
-      "type": "Microsoft.Compute/virtualMachines/extensions",
-      "name": "[concat(variables('vmNameNode'), copyIndex(), '/DockerExtension')]",
-      "apiVersion": "2015-06-15",
-      "location": "[resourceGroup().location]",
-      "copy": {
-        "name": "extensionLoopNode",
-        "count": "[parameters('nodeCount')]"
-      },
-      "dependsOn": [
-        "[concat('Microsoft.Compute/virtualMachines/', variables('vmNameNode'), copyIndex())]",
-        "[concat('Microsoft.Compute/virtualMachines/', variables('vmNameNode'), copyIndex(), '/extensions/', '/InstallDocker')]"
-      ],
-      "properties": {
-        "publisher": "Microsoft.Azure.Extensions",
-        "type": "DockerExtension",
-        "typeHandlerVersion": "1.0",
-        "autoUpgradeMinorVersion": true,
-        "settings": {
-          "docker": {
-            "port": "2375",
-	    "options": [
-	      "--cluster-store=consul://10.0.0.4:8500",
-	      "--cluster-advertise=eth0:2375"
-	    ]
-          }
-        }
-      }
     }
   ],
   "outputs": {

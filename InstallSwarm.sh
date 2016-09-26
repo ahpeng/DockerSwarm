@@ -152,6 +152,9 @@ installDocker()
 }
 time installDocker
 sudo usermod -aG docker $AZUREUSER
+# Set mirror daocloud
+sudo curl -sSL https://get.daocloud.io/daotools/set_mirror.sh | sh -s http://4d0183dd.m.daocloud.io
+sudo service docker restart
 if isagent ; then
   # Start Docker and listen on :2375 (no auth, but in vnet)
   echo 'DOCKER_OPTS="-H unix:///var/run/docker.sock -H 0.0.0.0:2375"' | sudo tee -a /etc/default/docker
