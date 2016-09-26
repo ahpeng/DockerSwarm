@@ -481,7 +481,7 @@
     },
     {
       "type": "Microsoft.Compute/virtualMachines/extensions",
-      "name": "[concat(variables('vmNameMaster'), copyIndex(), '/InstallDocker')]",
+      "name": "[concat(variables('vmNameMaster'), copyIndex(), '/InstallSwarm')]",
       "apiVersion": "[variables('apiVersion')]",
       "location": "[resourceGroup().location]",
        "copy": {
@@ -505,7 +505,7 @@
     },
    {
       "type": "Microsoft.Compute/virtualMachines/extensions",
-      "name": "[concat(variables('vmNameNode'), copyIndex(), '/InstallDocker')]",
+      "name": "[concat(variables('vmNameNode'), copyIndex(), '/InstallSwarm')]",
       "apiVersion": "[variables('apiVersion')]",
       "location": "[resourceGroup().location]",
       "copy": {
