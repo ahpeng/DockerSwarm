@@ -24,8 +24,7 @@ MASTERCOUNT=${1}
 MASTERPREFIX=${2}
 MASTERFIRSTADDR=${3}
 AZUREUSER=${4}
-POSTINSTALLSCRIPTURI=${5}
-BASESUBNET=${6}
+BASESUBNET=${5}
 VMNAME=`hostname`
 VMNUMBER=`echo $VMNAME | sed 's/.*[^0-9]\([0-9]\+\)*$/\1/'`
 VMPREFIX=`echo $VMNAME | sed 's/\(.*[^0-9]\)*[0-9]\+$/\1/'`
@@ -266,12 +265,6 @@ if isagent ; then
   docker-compose up -d
   #popd
   echo "completed starting docker swarm on the agent"
-fi
-
-if [ $POSTINSTALLSCRIPTURI != "disabled" ]
-then
-  echo "downloading, and kicking off post install script"
-  /bin/bash -c "wget --tries 20 --retry-connrefused --waitretry=15 -qO- $POSTINSTALLSCRIPTURI | nohup /bin/bash >> /var/log/azure/cluster-bootstrap-postinstall.log 2>&1 &"
 fi
 
 echo "processes at end of script"

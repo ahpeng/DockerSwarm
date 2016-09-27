@@ -73,7 +73,7 @@
     "nodesLbName": "swarm-lb-nodes",
     "nodesLbID": "[resourceId('Microsoft.Network/loadBalancers',variables('nodesLbName'))]",
     "nodesLbBackendPoolName": "swarm-nodes-pool",
-    "clusterInstallParameters": "[concat(parameters('masterCount'), ' ',variables('vmNameMaster'), ' ',variables('masterFirstAddr'), ' ',variables('adminUsername'),' ',' ', ' ', variables('baseSubnet'))]", 
+    "clusterInstallParameters": "[concat(parameters('masterCount'), ' ',variables('vmNameMaster'), ' ',variables('masterFirstAddr'), ' ',variables('adminUsername'), ' ', variables('baseSubnet'))]", 
     "sshKeyPath": "[concat('/home/', variables('adminUsername'), '/.ssh/authorized_keys')]"
   },
   "resources": [
