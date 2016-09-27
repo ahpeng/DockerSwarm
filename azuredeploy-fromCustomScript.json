@@ -74,12 +74,7 @@
     "nodesLbID": "[resourceId('Microsoft.Network/loadBalancers',variables('nodesLbName'))]",
     "nodesLbBackendPoolName": "swarm-nodes-pool",
     "clusterInstallParameters": "[concat(parameters('masterCount'), ' ',variables('vmNameMaster'), ' ',variables('masterFirstAddr'), ' ',variables('adminUsername'),' ',' ', ' ', variables('baseSubnet'))]", 
-    "sshKeyPath": "[concat('/home/', variables('adminUsername'), '/.ssh/authorized_keys')]",
-    "consulServerArgs": [
-      "-advertise 10.0.0.4 -bootstrap-expect 3 -retry-join 10.0.0.5 -retry-join 10.0.0.6",
-      "-advertise 10.0.0.5 -retry-join 10.0.0.4 -retry-join 10.0.0.6",
-      "-advertise 10.0.0.6 -retry-join 10.0.0.4 -retry-join 10.0.0.5"
-    ]
+    "sshKeyPath": "[concat('/home/', variables('adminUsername'), '/.ssh/authorized_keys')]"
   },
   "resources": [
    {

@@ -140,7 +140,7 @@ echo "Installing and configuring docker"
 installDocker()
 {
   for i in {1..10}; do
-    wget --tries 4 --retry-connrefused --waitretry=15 -qO- https://get.docker.com | sh
+    curl -sSL https://get.daocloud.io/docker | sh
     if [ $? -eq 0 ]
     then
       # hostname has been found continue
@@ -161,7 +161,7 @@ if isagent ; then
 fi
 
 echo "Installing docker compose"
-curl -L https://github.com/docker/compose/releases/download/1.5.1/docker-compose-`uname -s`-`uname -m` > /usr/local/bin/docker-compose
+curl -L https://get.daocloud.io/docker/compose/releases/download/1.8.1/docker-compose-`uname -s`-`uname -m` > /usr/local/bin/docker-compose
 chmod +x /usr/local/bin/docker-compose
 
 sudo service docker restart
