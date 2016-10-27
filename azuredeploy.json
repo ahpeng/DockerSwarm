@@ -467,7 +467,7 @@
       ],
       "properties": {
          "networkSecurityGroup": {
-          "id": "[variables('nodesNsgName')]"
+          "id": "[variables('nodesNsgID')]"
         },
         "ipConfigurations": [
           {
