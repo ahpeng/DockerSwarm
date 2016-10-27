@@ -131,6 +131,24 @@ if isagent ; then
 fi
 
 ################
+# Modify ubuntu's Source list
+################
+sudo mv /etc/apt/sources.list /etc/apt/sources.list_bak
+echo "\
+deb http://mirrors.aliyun.com/ubuntu/ trusty main multiverse restricted universe
+deb http://mirrors.aliyun.com/ubuntu/ trusty-backports main multiverse restricted universe
+deb http://mirrors.aliyun.com/ubuntu/ trusty-proposed main multiverse restricted universe
+deb http://mirrors.aliyun.com/ubuntu/ trusty-security main multiverse restricted universe
+deb http://mirrors.aliyun.com/ubuntu/ trusty-updates main multiverse restricted universe
+deb-src http://mirrors.aliyun.com/ubuntu/ trusty main multiverse restricted universe
+deb-src http://mirrors.aliyun.com/ubuntu/ trusty-backports main multiverse restricted universe
+deb-src http://mirrors.aliyun.com/ubuntu/ trusty-proposed main multiverse restricted universe
+deb-src http://mirrors.aliyun.com/ubuntu/ trusty-security main multiverse restricted universe
+deb-src http://mirrors.aliyun.com/ubuntu/ trusty-updates main multiverse restricted universe " >/tmp/sources.list
+sudo cp /tmp/sources.list /etc/apt/sources.list
+sudo apt-get update
+
+################
 # Install Docker
 ################
 
