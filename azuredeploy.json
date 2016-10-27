@@ -72,6 +72,8 @@
     "mastersLbBackendPoolName": "swarm-masters-pool",
     "nodesLbName": "swarm-lb-nodes",
     "nodesLbID": "[resourceId('Microsoft.Network/loadBalancers',variables('nodesLbName'))]",
+    "nodesLbIPConfigName": "NodesLBFrontEnd",
+    "nodesLbIPConfigID": "[concat(variables('nodesLbID'),'/frontendIPConfigurations/', variables('nodesLbIPConfigName'))]",
     "nodesLbBackendPoolName": "swarm-nodes-pool",
     "clusterInstallParameters": "[concat(parameters('masterCount'), ' ',variables('vmNameMaster'), ' ',variables('masterFirstAddr'), ' ',variables('adminUsername'), ' ', variables('baseSubnet'))]", 
     "sshKeyPath": "[concat('/home/', variables('adminUsername'), '/.ssh/authorized_keys')]"
@@ -186,6 +188,7 @@
         ]
       }
     },
+
     {
       "apiVersion": "2015-06-15",
       "type": "Microsoft.Network/networkSecurityGroups",
@@ -194,22 +197,51 @@
       "properties": {
         "securityRules": [
           {
-            "name": "AllowAny",
+            "name": "http",
             "properties": {
-              "description": "Swarm node ports need to be configured on the load balancer to be reachable",
-              "protocol": "*",
+              "description": "Allow HTTP",
+              "protocol": "Tcp",
               "sourcePortRange": "*",
-              "destinationPortRange": "*",
+              "destinationPortRange": "80",
               "sourceAddressPrefix": "*",
               "destinationAddressPrefix": "*",
               "access": "Allow",
-              "priority": 1000,
+              "priority": 210,
+              "direction": "Inbound"
+            }
+          },
+          {
+            "name": "https",
+            "properties": {
+              "description": "Allow HTTPS",
+              "protocol": "Tcp",
+              "sourcePortRange": "*",
+              "destinationPortRange": "443",
+              "sourceAddressPrefix": "*",
+              "destinationAddressPrefix": "*",
+              "access": "Allow",
+              "priority": 220,
+              "direction": "Inbound"
+            }
+          },
+          {
+            "name": "Tcp8080",
+            "properties": {
+              "description": "Allow port 8080",
+              "protocol": "Tcp",
+              "sourcePortRange": "*",
+              "destinationPortRange": "8080",
+              "sourceAddressPrefix": "*",
+              "destinationAddressPrefix": "*",
+              "access": "Allow",
+              "priority": 230,
               "direction": "Inbound"
             }
           }
         ]
       }
     },
+
     {
       "apiVersion": "2015-06-15",
       "type": "Microsoft.Network/networkInterfaces",
@@ -297,6 +329,7 @@
         "enableFloatingIP": false
       }
     },
+    
     {
       "apiVersion": "2015-06-15",
       "name": "[variables('nodesLbName')]",
@@ -308,7 +341,7 @@
       "properties": {
         "frontendIPConfigurations": [
           {
-            "name": "LoadBalancerFrontEnd",
+            "name": "[variables('nodesLbIPConfigName')]",
             "properties": {
               "publicIPAddress": {
                 "id": "[resourceId('Microsoft.Network/publicIPAddresses',variables('nodesPublicIPAddrName'))]"
@@ -320,9 +353,104 @@
           {
             "name": "[variables('nodesLbBackendPoolName')]"
           }
-        ]
+        ],
+        "loadBalancingRules": [
+          {
+            "name": "LBRuleHTTP",
+            "properties": {
+              "frontendIPConfiguration": {
+                "id": "[variables('nodesLbIPConfigID')]"
+              },
+              "backendAddressPool": {
+                "id": "[concat(variables('nodesLbID'), '/backendAddressPools/', variables('nodesLbBackendPoolName'))]"
+              },
+              "protocol": "Tcp",
+              "frontendPort": 80,
+              "backendPort": 80,
+              "enableFloatingIP": false,
+              "idleTimeoutInMinutes": 5,
+              "loadDistribution": "Default",
+              "probe": {
+                "id": "[concat(variables('nodesLbID'),'/probes/tcpHTTPProbe')]"
+              }
+            }
+          },
+          {
+            "name": "LBRuleHTTPS",
+            "properties": {
+              "frontendIPConfiguration": {
+                "id": "[variables('nodesLbIPConfigID')]"
+              },
+              "backendAddressPool": {
+                "id": "[concat(variables('nodesLbID'), '/backendAddressPools/', variables('nodesLbBackendPoolName'))]"
+              },
+              "protocol": "Tcp",
+              "frontendPort": 443,
+              "backendPort": 443,
+              "enableFloatingIP": false,
+              "idleTimeoutInMinutes": 5,
+              "loadDistribution": "Default",
+              "probe": {
+                "id": "[concat(variables('nodesLbID'),'/probes/tcpHTTPSProbe')]"
+              }
+            }
+          },
+          {
+            "name": "LBRulePort8080",
+            "properties": {
+              "frontendIPConfiguration": {
+                "id": "[variables('nodesLbIPConfigID')]"
+              },
+              "backendAddressPool": {
+                "id": "[concat(variables('nodesLbID'), '/backendAddressPools/', variables('nodesLbBackendPoolName'))]"
+              },
+              "protocol": "Tcp",
+              "frontendPort": 8080,
+              "backendPort": 8080,
+              "enableFloatingIP": false,
+              "idleTimeoutInMinutes": 5,
+              "loadDistribution": "Default",
+              "probe": {
+                "id": "[concat(variables('nodesLbID'),'/probes/tcpPort8080Probe')]"
+              }
+            }
+          }
+        ],
+        "probes": [
+          {
+            "name": "tcpHTTPProbe",
+            "properties": {
+              "protocol": "tcp",
+              "port": 80,
+              "intervalInSeconds": "5",
+              "numberOfProbes": "2"
+            }
+          },
+          {
+            "name": "tcpHTTPSProbe",
+            "properties": {
+              "protocol": "tcp",
+              "port": 443,
+              "intervalInSeconds": "5",
+              "numberOfProbes": "2"
+            }
+          },
+          {
+            "name": "tcpPort8080Probe",
+            "properties": {
+              "protocol": "tcp",
+              "port": 8080,
+              "intervalInSeconds": "5",
+              "numberOfProbes": "2"
+            }
+          }
+        ],
+        "inboundNatRules": []
       }
     },
+
+
+
     {
       "apiVersion": "2015-06-15",
       "type": "Microsoft.Network/networkInterfaces",
@@ -334,9 +462,13 @@
       },
       "dependsOn": [
         "[concat('Microsoft.Network/loadBalancers/', variables('nodesLbName'))]",
-        "[concat('Microsoft.Network/virtualNetworks/', variables('virtualNetworkName'))]"
+        "[concat('Microsoft.Network/virtualNetworks/', variables('virtualNetworkName'))]",
+        "[concat('Microsoft.Network/networkSecurityGroups/', variables('nodesNsgName'))]"
       ],
       "properties": {
+         "networkSecurityGroup": {
+          "id": "[variables('nodesNsgName')]"
+        },
         "ipConfigurations": [
           {
             "name": "ipConfigNode",
@@ -355,6 +487,8 @@
         ]
       }
     },
+
+   
     {
       "apiVersion": "2015-06-15",
       "type": "Microsoft.Compute/virtualMachines",
@@ -365,6 +499,7 @@
         "count": "[parameters('masterCount')]"
       },
       "dependsOn": [
+        "[concat('Microsoft.Storage/storageAccounts/', variables('newStorageAccountName'))]",
         "[concat('Microsoft.Network/networkInterfaces/', variables('vmNameMaster'), copyIndex(), '-nic')]",
         "[concat('Microsoft.Compute/availabilitySets/', variables('availabilitySetMasters'))]"
       ],
@@ -425,7 +560,10 @@
         "count": "[parameters('nodeCount')]"
       },
       "dependsOn": [
-        "[concat('Microsoft.Network/networkInterfaces/', variables('vmNameNode'), copyIndex(), '-nic')]"
+        "[concat('Microsoft.Storage/storageAccounts/', variables('newStorageAccountName'))]",
+        "[concat('Microsoft.Network/networkInterfaces/', variables('vmNameNode'), copyIndex(), '-nic')]",
+        "[concat('Microsoft.Compute/availabilitySets/', variables('availabilitySetNodes'))]"
+        
       ],
       "properties": {
         "availabilitySet": {
@@ -457,7 +595,7 @@
             "version": "latest"
           },
           "osDisk": {
-            "name": "[concat(variables('vmNameMaster'), copyIndex(),'-osdisk')]",
+            "name": "[concat(variables('vmNameNode'), copyIndex(),'-osdisk')]",
             "vhd": {
               "uri": "[concat(reference(concat('Microsoft.Storage/storageAccounts/', variables('NewStorageAccountName')), variables('apiVersion')).primaryEndpoints.blob, variables('vhdBlobContainer'), '/node-', copyIndex(), '-osdisk.vhd')]"
             },
