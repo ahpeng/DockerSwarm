@@ -135,16 +135,16 @@ fi
 ################
 sudo mv /etc/apt/sources.list /etc/apt/sources.list_bak
 echo "\
-deb http://mirrors.163.com/ubuntu/ trusty main multiverse restricted universe
-deb http://mirrors.163.com/ubuntu/ trusty-backports main multiverse restricted universe
-deb http://mirrors.163.com/ubuntu/ trusty-proposed main multiverse restricted universe
-deb http://mirrors.163.com/ubuntu/ trusty-security main multiverse restricted universe
-deb http://mirrors.163.com/ubuntu/ trusty-updates main multiverse restricted universe
-deb-src http://mirrors.163.com/ubuntu/ trusty main multiverse restricted universe
-deb-src http://mirrors.163.com/ubuntu/ trusty-backports main multiverse restricted universe
-deb-src http://mirrors.163.com/ubuntu/ trusty-proposed main multiverse restricted universe
-deb-src http://mirrors.163.com/ubuntu/ trusty-security main multiverse restricted universe
-deb-src http://mirrors.163.com/ubuntu/ trusty-updates main multiverse restricted universe " >/tmp/sources.list
+deb http://mirror.skyshe.cn/ubuntu/ trusty main multiverse restricted universe
+deb http://mirror.skyshe.cn/ubuntu/ trusty-backports main multiverse restricted universe
+deb http://mirror.skyshe.cn/ubuntu/ trusty-proposed main multiverse restricted universe
+deb http://mirror.skyshe.cn/ubuntu/ trusty-security main multiverse restricted universe
+deb http://mirror.skyshe.cn/ubuntu/ trusty-updates main multiverse restricted universe
+deb-src http://mirror.skyshe.cn/ubuntu/ trusty main multiverse restricted universe
+deb-src http://mirror.skyshe.cn/ubuntu/ trusty-backports main multiverse restricted universe
+deb-src http://mirror.skyshe.cn/ubuntu/ trusty-proposed main multiverse restricted universe
+deb-src http://mirror.skyshe.cn/ubuntu/ trusty-security main multiverse restricted universe
+deb-src http://mirror.skyshe.cn/ubuntu/ trusty-updates main multiverse restricted universe " >/tmp/sources.list
 sudo cp /tmp/sources.list /etc/apt/sources.list
 sudo apt-get update
 
