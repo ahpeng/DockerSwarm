@@ -281,6 +281,10 @@ if isagent ; then
 #" > /opt/azure/containers/docker-compose.yml
   #pushd /opt/azure/containers/
   docker-compose up -d
+  #enable docker swarm overlay
+  content=DOCKER_OPTS="-H unix:///var/run/docker.sock -H 0.0.0.0:2375 --cluster-store=consul://$MASTER0IPADDR:8500 --cluster-advertise=$HOSTADDR:2375"
+  echo $content |sudo tee /etc/default/docker
+  sudo service docker restart
   #popd
   echo "completed starting docker swarm on the agent"
 fi
