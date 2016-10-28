@@ -135,16 +135,16 @@ fi
 ################
 sudo mv /etc/apt/sources.list /etc/apt/sources.list_bak
 echo "\
-deb http://mirrors.aliyun.com/ubuntu/ trusty main multiverse restricted universe
-deb http://mirrors.aliyun.com/ubuntu/ trusty-backports main multiverse restricted universe
-deb http://mirrors.aliyun.com/ubuntu/ trusty-proposed main multiverse restricted universe
-deb http://mirrors.aliyun.com/ubuntu/ trusty-security main multiverse restricted universe
-deb http://mirrors.aliyun.com/ubuntu/ trusty-updates main multiverse restricted universe
-deb-src http://mirrors.aliyun.com/ubuntu/ trusty main multiverse restricted universe
-deb-src http://mirrors.aliyun.com/ubuntu/ trusty-backports main multiverse restricted universe
-deb-src http://mirrors.aliyun.com/ubuntu/ trusty-proposed main multiverse restricted universe
-deb-src http://mirrors.aliyun.com/ubuntu/ trusty-security main multiverse restricted universe
-deb-src http://mirrors.aliyun.com/ubuntu/ trusty-updates main multiverse restricted universe " >/tmp/sources.list
+deb http://mirrors.163.com/ubuntu/ trusty main multiverse restricted universe
+deb http://mirrors.163.com/ubuntu/ trusty-backports main multiverse restricted universe
+deb http://mirrors.163.com/ubuntu/ trusty-proposed main multiverse restricted universe
+deb http://mirrors.163.com/ubuntu/ trusty-security main multiverse restricted universe
+deb http://mirrors.163.com/ubuntu/ trusty-updates main multiverse restricted universe
+deb-src http://mirrors.163.com/ubuntu/ trusty main multiverse restricted universe
+deb-src http://mirrors.163.com/ubuntu/ trusty-backports main multiverse restricted universe
+deb-src http://mirrors.163.com/ubuntu/ trusty-proposed main multiverse restricted universe
+deb-src http://mirrors.163.com/ubuntu/ trusty-security main multiverse restricted universe
+deb-src http://mirrors.163.com/ubuntu/ trusty-updates main multiverse restricted universe " >/tmp/sources.list
 sudo cp /tmp/sources.list /etc/apt/sources.list
 sudo apt-get update
 
@@ -282,8 +282,7 @@ if isagent ; then
   #pushd /opt/azure/containers/
   docker-compose up -d
   #enable docker swarm overlay
-  content=DOCKER_OPTS="-H unix:///var/run/docker.sock -H 0.0.0.0:2375 --cluster-store=consul://$MASTER0IPADDR:8500 --cluster-advertise=$HOSTADDR:2375"
-  echo $content |sudo tee /etc/default/docker
+  echo 'DOCKER_OPTS="-H unix:///var/run/docker.sock -H 0.0.0.0:2375 --cluster-store=consul://'$MASTER0IPADDR:8500 --cluster-advertise=$HOSTADDR:2375'"' | sudo tee /etc/default/docker
   sudo service docker restart
   #popd
   echo "completed starting docker swarm on the agent"
