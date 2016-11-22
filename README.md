@@ -11,7 +11,7 @@
 https://github.com/Azure/AzureStack-QuickStart-Templates/tree/master/docker-swarm-ubuntu
 
 =======
-盆盆对此作了以下四个优化：
+盆盆对此作了以下5个优化：
 
 1. 修改了Ubuntu的apt源，指向国内的mirror，您可以修改对应的脚本(InstallSwarm.sh)，改为您喜欢的源。
 
@@ -22,6 +22,8 @@ https://github.com/Azure/AzureStack-QuickStart-Templates/tree/master/docker-swar
 3. 修改docker的mirror hub，指向daocloud的镜像地址。
 
 4. 修改docker swarm的配置，以支持network overlay。
+
+5. 修改docker swarm cluster的网络拓扑配置，不再保留jumpbox，同时将master和agent node分为两个子网，并对agent node子网开放80/443/8080 Azure LB。
 
 欢迎关注盆盆的微信公众号：sysinternal，欢迎加盆盆为好友哈：markpah   
 
