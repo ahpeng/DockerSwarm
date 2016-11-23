@@ -632,7 +632,7 @@
                     "fileUris": [
                         "[parameters('scriptUrl')]"
                     ],
-                    "commandToExecute": "[concat('/bin/bash -c \"/bin/bash InstallSwarm.sh ', variables('clusterInstallParameters'), ' >> /var/log/azure/cluster-bootstrap.log 2>&1\"')]"
+                    "commandToExecute": "[concat('/bin/bash -c \"/bin/bash InstallSwarmmas.sh ', variables('clusterInstallParameters'), ' >> /var/log/azure/cluster-bootstrap.log 2>&1\"')]"
                 }
             }
     },
@@ -656,7 +656,7 @@
                     "fileUris": [
                         "[parameters('scriptUrl')]"
                     ],
-                    "commandToExecute": "[concat('/usr/bin/nohup /bin/bash -c \"/bin/bash InstallSwarm.sh ', variables('clusterInstallParameters'), ' >> /var/log/azure/cluster-bootstrap.log 2>&1 &\" &')]"
+                    "commandToExecute": "[concat('/usr/bin/nohup /bin/bash -c \"/bin/bash InstallSwarmmas.sh ', variables('clusterInstallParameters'), ' >> /var/log/azure/cluster-bootstrap.log 2>&1 &\" &')]"
                 }
             }
     }
