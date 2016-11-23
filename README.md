@@ -1,7 +1,7 @@
 <a href="https://portal.azure.cn/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fahpeng%2FDockerSwarm%2Fmaster%2Fazuredeploy.json" target="_blank">
     <img src="https://raw.githubusercontent.com/ahpeng/DockerSwarm/master/images/azuremooncake.png"/>
 </a>
-<a href="https://portal.azure.local/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fahpeng%2FDockerSwarm%2Fmaster%2Fazuredeploy.json" target="_blank">
+<a href="https://portal.azure.local/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fahpeng%2FDockerSwarm%2Fmaster%2Fazuredeploymas.json" target="_blank">
     <img src="https://raw.githubusercontent.com/ahpeng/DockerSwarm/master/images/azureStack.png"/>
 </a>
 

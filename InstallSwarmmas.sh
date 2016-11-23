@@ -131,24 +131,6 @@ if isagent ; then
 fi
 
 ################
-# Modify ubuntu's Source list
-################
-sudo mv /etc/apt/sources.list /etc/apt/sources.list_bak
-echo "\
-deb http://mirrors.aliyun.com/ubuntu/ trusty main multiverse restricted universe
-deb http://mirrors.aliyun.com/ubuntu/ trusty-backports main multiverse restricted universe
-deb http://mirrors.aliyun.com/ubuntu/ trusty-proposed main multiverse restricted universe
-deb http://mirrors.aliyun.com/ubuntu/ trusty-security main multiverse restricted universe
-deb http://mirrors.aliyun.com/ubuntu/ trusty-updates main multiverse restricted universe
-deb-src http://mirrors.aliyun.com/ubuntu/ trusty main multiverse restricted universe
-deb-src http://mirrors.aliyun.com/ubuntu/ trusty-backports main multiverse restricted universe
-deb-src http://mirrors.aliyun.com/ubuntu/ trusty-proposed main multiverse restricted universe
-deb-src http://mirrors.aliyun.com/ubuntu/ trusty-security main multiverse restricted universe
-deb-src http://mirrors.aliyun.com/ubuntu/ trusty-updates main multiverse restricted universe " >/tmp/sources.list
-sudo cp /tmp/sources.list /etc/apt/sources.list
-sudo apt-get update
-
-################
 # Install Docker
 ################
 
@@ -157,7 +139,7 @@ echo "Installing and configuring docker"
 installDocker()
 {
   for i in {1..10}; do
-    curl -sSL https://get.daocloud.io/docker | sh
+    wget --tries 4 --retry-connrefused --waitretry=15 -qO- https://get.docker.com | sh
     if [ $? -eq 0 ]
     then
       # hostname has been found continue
@@ -169,16 +151,13 @@ installDocker()
 }
 time installDocker
 sudo usermod -aG docker $AZUREUSER
-# Set mirror daocloud
-sudo curl -sSL https://get.daocloud.io/daotools/set_mirror.sh | sh -s http://4d0183dd.m.daocloud.io
-sudo service docker restart
 if isagent ; then
   # Start Docker and listen on :2375 (no auth, but in vnet)
   echo 'DOCKER_OPTS="-H unix:///var/run/docker.sock -H 0.0.0.0:2375"' | sudo tee -a /etc/default/docker
 fi
 
 echo "Installing docker compose"
-curl -L https://get.daocloud.io/docker/compose/releases/download/1.8.1/docker-compose-`uname -s`-`uname -m` > /usr/local/bin/docker-compose
+curl -L https://github.com/docker/compose/releases/download/1.5.1/docker-compose-`uname -s`-`uname -m` > /usr/local/bin/docker-compose
 chmod +x /usr/local/bin/docker-compose
 
 sudo service docker restart
